@@ -12,13 +12,19 @@ basically, as described here: https://www.passwordstore.org/#extensions
     wget https://raw.githubusercontent.com/puhoy/pass-generate-phrase/master/generate-phrase/generate-phrase.bash -P ~/.password-store/.extensions/
     wget https://raw.githubusercontent.com/puhoy/pass-generate-phrase/master/generate-phrase/eff_large_wordlist.txt -P ~/.password-store/.extensions/
 
+    # and make the script executable
+    chmod +x ~/.password-store/.extensions/generate-phrase.bash
 
-and set PASSWORD_STORE_ENABLE_EXTENSIONS to true
+and set `PASSWORD_STORE_ENABLE_EXTENSIONS` environment variable to true
 
 
 ##### and for a system wide installation
 
 put `generate-phrase.bash` and `eff_large_wordlist.txt` in `/usr/lib/password-store/extensions` (or whatever that is for your distribution)
+
+and make the script executable:
+
+`/usr/lib/password-store/extensions/generate-phrase.bash`
 
 (no need to set the environment var)
 
