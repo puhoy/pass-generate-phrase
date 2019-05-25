@@ -9,15 +9,20 @@ WORDCOUNT=4
 SEPARATOR="-"
 COMMAND="generate-phrase"
 
+get_rand() {
+    local modulo=${1}
+    random=`od -An -N2 -i < /dev/urandom`
+    mod_random=`expr ${random} % ${modulo}`
+    printf "${mod_random}"
+}
+
 random_word(){
     local wordlist="${1}"
     local line random wordcount word
 
-    random=`od -An -N2 -i < /dev/urandom`
-
     wordcount=`cat ${wordlist} | wc -l`
 
-    line=`expr $random % $wordcount`
+    line=`get_rand ${wordcount}`
 
     word=`tail -n+${line} ${wordlist} | head -n1 | grep -oE '[^[:space:]]+$'`
 
@@ -34,11 +39,16 @@ phrase_generate() {
     local wordlistfile=${1}
     local count=${2}
     local separator=${3}
+    local randomupper=${4}
 
     words=()
 
     for (( i = 0 ; i < ${count} ; i++ )); do
         word=`random_word ${wordlistfile}`
+        do_upper=`get_rand 2`
+        if [[ ${randomupper} -eq 1 && ${do_upper} -eq 1 ]]; then
+            word=`echo ${word} | tr '[:lower:]' '[:upper:]'`
+        fi
         words+=(${word})
     done
 
@@ -62,11 +72,12 @@ cmd_phrase_generate() {
     local clip=0
     local qrcode=0
     local inplace=0
+    local randomupper=0
 
     local opts
-    opts="$($GETOPT -o c:l:s:fcqi -l wordcount:,wordlist:,separator:,force,clip,qrcode,inplace -n "$PROGRAM" -- "$@")"
+    opts="$($GETOPT -o c:l:s:fcqiu -l wordcount:,wordlist:,separator:,force,clip,qrcode,inplace,randomupper -n "$PROGRAM" -- "$@")"
     local err=$?
-    [[ $err -ne 0 ]] && die "Usage: $PROGRAM [--wordcount,-w wordcount] [--wordlist,-l wordlist] [--separator,-s separator] [--clip,-c] [--qrcode,-q] [--in-place,-i | --force,-f] pass-name"
+    [[ $err -ne 0 ]] && die "Usage: $PROGRAM [--wordcount,-w wordcount] [--wordlist,-l wordlist] [--separator,-s separator] [--randomupper,-u] [--clip,-c] [--qrcode,-q] [--in-place,-i | --force,-f] pass-name"
 
     eval set -- "$opts"
 
@@ -75,6 +86,7 @@ cmd_phrase_generate() {
         -c|--wordcount) wordcount=$2;  shift; shift;;
         -l|--wordlist) wordlist=$2;  shift; shift;;
         -s|--separator) separator=$2;  shift; shift;;
+        -u|--randomupper) randomupper=1;  shift;;
         -f|--force) force=1; shift ;;
         -q|--qrcode) qrcode=1; shift ;;
         -c|--clip) clip=1; shift ;;
@@ -83,7 +95,10 @@ cmd_phrase_generate() {
 
     esac done
 
-    pass=`phrase_generate ${wordlist} ${wordcount} ${separator}`
+    [[ ! -f ${wordlist} ]] && die "cant find wordlist at ${wordlist}"
+
+    pass=`phrase_generate ${wordlist} ${wordcount} ${separator} ${randomupper}`
+
 
   	local path="$1"
 	check_sneaky_paths "$path"

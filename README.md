@@ -32,9 +32,10 @@ and make the script executable:
 ## usage
 
     pass generate-phrase
-        [--wordcount,-w wordcount]
-        [--wordlist,-l /path/to/wordlist]
-        [--separator,-s separator]
+        [--wordcount,-w wordcount] 
+        [--wordlist,-l wordlist]
+        [--separator,-s separator] 
+        [--randomupper,-u] 
         [--clip,-c]
         [--qrcode,-q]
         [--in-place,-i | --force,-f]
@@ -47,6 +48,28 @@ and make the script executable:
         * a diceware list, each line like "11111 banana"
         **https://www.eff.org/deeplinks/2016/07/new-wordlists-random-passphrases
 
+
+#### options
+
+`--wordcount, -w N`
+
+generate N words (default 4)
+
+`--wordlist, -l /path/to/list`
+
+use file under /path/to/list instead of included wordlist 
+
+(default the [EFFs long wordlist](https://www.eff.org/deeplinks/2016/07/new-wordlists-random-passphrases)) 
+
+`--separator, -s SEPARATOR` 
+
+use SEPARATOR to separate the words (default "-")
+
+`--randomupper,-u`
+
+randomly uppercase words
+
+
 ...for example
 
     $ pass generate-phrase my/new/testpassword
@@ -57,6 +80,15 @@ and make the script executable:
      create mode 100644 my/new/testpassword.gpg
     The generated password for my/new/testpassword is:
     filing-choice-gecko-campus
+
+    
+    $ pass generate-phrase my/new/testpassword --separator="+" --wordcount 8 --wordlist diceware_german.txt --randomupper
+    An entry already exists for my/new/testpassword. Overwrite it? [y/N] y
+    [master 15b7123] Add generated password for my/new/testpassword.
+     1 file changed, 0 insertions(+), 0 deletions(-)
+     rewrite my/new/testpassword.gpg (100%)
+    The generated password for my/new/testpassword is:
+    oben+UO+GEPARD+wq+HUEPFTE+WONNE+zitrat+TOD
 
     
 
