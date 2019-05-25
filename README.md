@@ -33,8 +33,12 @@ and make the script executable:
 
     pass generate-phrase
         [--wordcount,-w wordcount]
-        [--wordlist, -l /path/to/wordlist]
-        [--separator,-s separator] pass-name
+        [--wordlist,-l /path/to/wordlist]
+        [--separator,-s separator]
+        [--clip,-c]
+        [--qrcode,-q]
+        [--in-place,-i | --force,-f]
+        pass-name
 
         generate a passphrase with WORDCOUNT (or 4) words,
         made from words in WORDLIST* (or the EFFs long wordlist**),

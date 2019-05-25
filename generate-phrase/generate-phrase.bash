@@ -58,22 +58,28 @@ cmd_phrase_generate() {
     local wordlist=${WORDLIST}
     local wordcount=${WORDCOUNT}
     local separator=${SEPARATOR}
-    local force
+    local force=0
+    local clip=0
+    local qrcode=0
+    local inplace=0
 
     local opts
-    opts="$($GETOPT -o c:l:s:f -l wordcount:,wordlist:,separator:,force -n "$PROGRAM" -- "$@")"
+    opts="$($GETOPT -o c:l:s:fcqi -l wordcount:,wordlist:,separator:,force,clip,qrcode,inplace -n "$PROGRAM" -- "$@")"
     local err=$?
-    [[ $err -ne 0 ]] && die "Usage: $PROGRAM [--wordcount,-w wordcount] [--wordlist, -l wordlist] [--separator, -s separator] pass-name"
+    [[ $err -ne 0 ]] && die "Usage: $PROGRAM [--wordcount,-w wordcount] [--wordlist,-l wordlist] [--separator,-s separator] [--clip,-c] [--qrcode,-q] [--in-place,-i | --force,-f] pass-name"
 
     eval set -- "$opts"
 
     while true;
     do case $1 in
-    -c|--wordcount) wordcount=$2;  shift; shift;;
-    -l|--wordlist) wordlist=$2;  shift; shift;;
-    -s|--separator) separator=$2;  shift; shift;;
-    -f|--force) force=1; shift ;;
-    --) shift; break ;;
+        -c|--wordcount) wordcount=$2;  shift; shift;;
+        -l|--wordlist) wordlist=$2;  shift; shift;;
+        -s|--separator) separator=$2;  shift; shift;;
+        -f|--force) force=1; shift ;;
+        -q|--qrcode) qrcode=1; shift ;;
+        -c|--clip) clip=1; shift ;;
+        -i|--inplace) inplace=1; shift ;;
+        --) shift; break ;;
 
     esac done
 
@@ -123,6 +129,9 @@ Usage:
         [--wordcount,-w wordcount]
         [--wordlist,-l /path/to/wordlist]
         [--separator,-s separator]
+        [--clip,-c]
+        [--qrcode,-q]
+        [--in-place,-i | --force,-f]
         pass-name
 
         generate a passphrase with WORDCOUNT (or 4) words,
